@@ -1,0 +1,49 @@
+
+/*
+ * read rss
+ */
+
+exports.readRss = function(req, res){
+	var uArr = req.split(':');
+  	if(req[0] !="https"){
+  		getHttpRss(req);
+  	}else{
+		getHttpsRss(req);
+	}
+};
+var getHttpRss = function(){
+	var options={
+	'host':'feed.cnblogs.com',
+	'port':80,
+	'path':'/blog/u/42893/rss',
+	'method':'get'
+	};
+    	http.get(options, function(resx) {
+   	 resx.on('data', function(data) {
+      		 html+=data;
+    	}).on('end',function(){
+		res.writeHead(200, {"Content-Type": "text/html"});//注意这里
+		res.write(html);
+		res.end()
+		
+   	 });
+    });
+}
+var getHttpsRss = function(){
+	var html = '';
+	https.get(u, function(resx) {
+  		console.log("statusCode: ", resx.statusCode);
+  		console.log("headers: ", resx.headers);
+
+ 		 resx.on('data', function(d) {
+   			html += d;
+  		}).on('end',function(){
+			 res.writeHead(200, {"Content-Type": "text/html"});//注意这里
+			res.write(html);
+			res.end()
+		});
+
+	}).on('error', function(e) {
+  		console.error(e);
+	});
+}
